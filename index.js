@@ -2,10 +2,15 @@ const { parse } = require("csv-parse");
 // File system module:
 const fs = require("fs");
 
-const results = [];
+const habitablePlanets = [];
 
 function isHabitablePlanet(planet) {
-  return planet["koi_disposition"] === "CONFIRMED";
+  return (
+    planet["koi_disposition"] === "CONFIRMED" &&
+    planet["koi_insol"] > 0.36 &&
+    planet["koi_insol"] < 1.11 &&
+    planet["koi_prad"] < 1.6
+  );
 }
 
 // Provide us an event emitter
@@ -20,8 +25,11 @@ fs.createReadStream("kepler_data.csv")
     })
   )
   .on("data", (data) => {
+    if (isHabitablePlanet(data)) {
+      habitablePlanets.push(data);
+    }
     // Push the data that comes in and store it in the "results" array
-    results.push(data);
+    // results.push(data);
   })
   //   Respond to our error event, which give us this error object in our callback function
   .on("error", (err) => {
@@ -29,8 +37,7 @@ fs.createReadStream("kepler_data.csv")
   })
   //   Print the results that we received
   .on("end", () => {
-    console.log(results);
-    console.log("done");
+    console.log(`${habitablePlanets.length} habitable planets found!`);
   });
 
 // parse();
