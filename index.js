@@ -37,6 +37,12 @@ fs.createReadStream("kepler_data.csv")
   })
   //   Print the results that we received
   .on("end", () => {
+    // Map function takes a callback that for each item in that array processes it and returns a new value for that item:
+    console.log(
+      habitablePlanets.map((planet) => {
+        return planet["kepler_name"];
+      })
+    );
     console.log(`${habitablePlanets.length} habitable planets found!`);
   });
 
